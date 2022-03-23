@@ -1,0 +1,10 @@
+.chalice/deployments/
+.chalice/venv/
+
+.DS_Store
+
+.env
+.venv
+
+__pycache__
+.ptyest_cache
