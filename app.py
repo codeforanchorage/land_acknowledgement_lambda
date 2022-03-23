@@ -24,11 +24,17 @@ def get_request_body(current_request):
 
 @app.route('/', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def index_post():
+    '''
+    This is the route Twilio should access. The user input should be in a
+    www-form-encoded `body`.
+    It will respond with TwilML xml output.
+    '''
     body = get_request_body(app.current_request)
     ret_text = process_body(body)
     return Response(body=twilio_response(ret_text),
                     status_code=200,
                     headers={'Content-Type': 'application/xml'})
+
 
 @app.route('/', methods=['GET'])
 def index_empty_get():
@@ -36,6 +42,10 @@ def index_empty_get():
 
 @app.route('/{body}', methods=['GET'])
 def index_get(body):
+    '''
+    Non-Twilio users can access this route with a GET request 
+    and will receive a JSON string response
+    '''
     ret_text = process_body(body)
     return Response(body=str(ret_text),
                     status_code=200,
