@@ -5,17 +5,23 @@ import json
 from chalicelib.geocode import geolocate
 from chalicelib.errors import LocationNotFound
 
+@pytest.fixture()
+def response_404(FakeResp):
+    return FakeResp(b'Not Found', 'Not Found', 404)
+
+
 @pytest.fixture
-def empty_geo_locations():
+def empty_geo_locations(FakeResp):
     d = {
         'type': 'FeatureCollection',
         'query': ['blah'],
         'features': []
     }
-    return json.dumps(d).encode('utf-8')
+    return FakeResp(json.dumps(d).encode('utf-8'), 'OK', 200)
+
 
 @pytest.fixture
-def good_geo_location():
+def good_geo_location(FakeResp):
     d = {
         'type': 'FeatureCollection',
         'query': ['anchorage', 'ak'],
@@ -54,29 +60,22 @@ def good_geo_location():
             }
        ]
     }
-    return json.dumps(d).encode('utf-8')
+    return FakeResp(json.dumps(d).encode('utf-8'), 'OK', 200)
 
-class FakeResp:
-    def __init__(self, data, message, status_code):
-        self.data = data
-        self.status = status_code
-        self.reason = message
 
-    def json(self):
-        return self.data
 
 @patch('chalicelib.geocode.session.request')
-def test_404_location(session):
+def test_404_location(session, response_404):
     '''It should raise location not found error on 404 from api'''
-    session.return_value = FakeResp(b'Not Found', 'Not Found', 404)
+    session.return_value = response_404
     with pytest.raises(LocationNotFound) as excinfo:
         result = geolocate("some place")
 
 
 @patch('chalicelib.geocode.session.request')
 def test_best_location(session, good_geo_location):
-    '''It should favore places over other types of locations and pick highest relevance'''
-    session.return_value = FakeResp(good_geo_location, 'OK', 200)
+    '''It should favor places over other types of locations and pick highest relevance'''
+    session.return_value = good_geo_location
     result = geolocate("some place")
     assert result['text'] == 'Anchorage'
     assert result['place_type'] == ['place']
@@ -85,7 +84,7 @@ def test_best_location(session, good_geo_location):
 @patch('chalicelib.geocode.session.request')
 def test_no_location(session, empty_geo_locations):
     '''It should favore places over other types of locations and pick highest relevance'''
-    session.return_value = FakeResp(empty_geo_locations, 'OK', 200)
+    session.return_value = empty_geo_locations
     with pytest.raises(LocationNotFound) as excinfo:
         result = geolocate("blah")
     
