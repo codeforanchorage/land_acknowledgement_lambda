@@ -21,6 +21,36 @@ def response_404(FakeResp):
     return FakeResp(b'Not Found', 'Not Found', 404)
 
 @pytest.fixture
+def good_zip_location(FakeResp):
+    d = {
+       "type": "FeatureCollection",
+        "query": ["60614"], 
+        "features": [{
+            "id": "postcode.14189074987591320",
+            "type": "Feature",
+            "place_type": ["postcode"],
+            "relevance": 1,
+            "properties": {},
+            "text": "60614",
+            "place_name": "Chicago, Illinois 60614, United States",
+            "bbox": [-87.678274,41.910784178,-87.620164014,41.93498],
+            "center": [-87.65,41.93],
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-87.65,41.93]
+            },
+            "context": [
+                {
+                    "id": "place.9607189446701850",
+                    "wikidata": "Q1297",
+                    "text": "Chicago"
+                },
+            ]
+        }]
+    }
+    return FakeResp(json.dumps(d).encode('utf-8'), 'OK', 200)
+
+@pytest.fixture
 def good_geo_location(FakeResp):
     d = {
         'type': 'FeatureCollection',
