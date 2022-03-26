@@ -38,7 +38,11 @@ def index_post():
 
 @app.route('/', methods=['GET'])
 def index_empty_get():
-    return "Hello. Please tell me the town and state you are in. For example, 'Anchorage, AK'"
+    ret_text = "Hello. Please tell me the town and state you are in. For example, 'Anchorage, AK'"
+    return Response(body=ret_text,
+                    status_code=200,
+                    headers={'Content-Type': 'application/json'})
+
 
 @app.route('/{body}', methods=['GET'])
 def index_get(body):

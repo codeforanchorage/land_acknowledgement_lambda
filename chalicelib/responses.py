@@ -117,7 +117,7 @@ def process_body(body):
     else:
         try:
             location = geolocate(body)
-            place_type = location['place_type'][0]
+            place_type = location['place_type'][0]            
             response_class = type_dispatch.get(place_type, GenericResponse)
             return response_class(body, location)
         except LocationNotFound:
