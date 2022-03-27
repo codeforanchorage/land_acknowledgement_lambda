@@ -57,17 +57,21 @@ class PoiResponse(GenericResponse):
 
 class LocationResponse(GenericResponse):
     '''Base class for repsonses that hit the geocoder.'''
+    
+    def __init__(self, query, location):
+        super().__init__(query, location)
+        self.lands = native_land_from_point(*self.location['center'])
+
     @abc.abstractmethod
     def response_from_area(self, lands_string, context):
         """Create a response string appropritate to the type"""
         return
 
     def __str__(self):
-        lands = native_land_from_point(*self.location['center'])
-        if not lands:
+        if not self.lands:
             return super().__str__()
         context = {item['id'].partition('.')[0]: item['text'] for item in self.location['context']}
-        land_string = self.land_string(lands)
+        land_string = self.land_string(self.lands)
         return self.response_from_area(land_string, context)
 
 

@@ -17,6 +17,5 @@ def native_land_from_point(lon, lat):
     if resp.status != 200:
         raise APIError(resp.reason)
     data = json.loads(resp.data.decode('utf-8'))
-    print("DATA: ", data)
     return [d['properties'] for d in data if d['type'] == 'Feature']
 

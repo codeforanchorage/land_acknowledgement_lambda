@@ -1,7 +1,18 @@
-from unittest.mock import patch, MagicMock
-import pytest
+import json
+
+from unittest.mock import patch
 from chalice.test import Client
+from xml.dom import minidom
 from app import app
+from chalicelib.responses import SUFFIX
+
+
+def get_message_from_xml(xml_string):
+    '''Just a little help to deal with twilio's xml format'''
+    xmldoc = minidom.parseString(xml_string)
+    itemlist = xmldoc.getElementsByTagName('Message')
+    return itemlist[0].firstChild.data
+
 
 def test_index():
     '''It should post help text with empty qeury'''
@@ -19,6 +30,26 @@ def test_get_location(request, good_geo_location, good_native_land_result):
         request.side_effect =  [good_geo_location, good_native_land_result]
         response = client.http.get('/'+query)
         assert response.body.decode() == 'In Chicago you are on Peoria and Bodwéwadmi (Potawatomi) land.'
+
+
+@patch('chalicelib.http.session.request')
+def test_post_location(request, good_geo_location, good_native_land_result):
+    '''It should respond with twiML that includes both the queried location and native lands'''
+
+    with Client(app) as client:
+        request.side_effect =  [good_geo_location, good_native_land_result]
+        
+        response = client.http.post(
+            '/',
+            headers={'Content-Type':'application/x-www-form-urlencoded'},
+            body=b'Body=Chicago, il'
+        )
+
+        result_string = get_message_from_xml(response.body.decode())
+        assert  result_string == '\n'.join([
+            'In Chicago you are on Peoria and Bodwéwadmi (Potawatomi) land.',
+            SUFFIX
+        ])
 
 
 @patch('chalicelib.http.session.request')
