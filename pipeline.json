@@ -179,7 +179,7 @@
                       ]
                     ]
                   },
-                  "Branch": "master",
+                  "Branch": "main",
                   "PollForSourceChanges": true
                 }
               }
