@@ -2,9 +2,6 @@ artifacts:
   files:
   - transformed.yaml
   type: zip
-env:
-  secrets-manager:
-    MAPBOX_TOKEN: "MAPBOX_TOKEN:MAPBOX_TOKEN"
 phases:
   build:
     commands:
