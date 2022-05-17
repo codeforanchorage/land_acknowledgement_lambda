@@ -8,13 +8,13 @@ from chalicelib.get_secret import get_secret
 
 API_BASE = 'https://api.mapbox.com/geocoding/v5/mapbox.places/'
 
-MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN') or get_secret('MAPBOX_TOKEN')
-
-if MAPBOX_TOKEN is None:
-    raise ConfigurationError("The env MAPBOX_TOKEN is missing from the environment.")
-
 
 def geolocate(raw_str):
+    MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN') or get_secret('MAPBOX_TOKEN')
+
+    if MAPBOX_TOKEN is None:
+        raise ConfigurationError("The env MAPBOX_TOKEN is missing from the environment.")
+
     query = {
         'access_token': MAPBOX_TOKEN,
         'type': 'place'
