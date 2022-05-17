@@ -4,7 +4,7 @@
     "ApplicationName": {
       "Default": "ak_land_aws",
       "Type": "String",
-      "Description": "Enter the name of your application"
+      "Description": "Native Lands Chalice App"
     },
     "CodeBuildImage": {
       "Default": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
@@ -17,7 +17,7 @@
     },
     "GithubRepoName": {
       "Type": "String",
-      "Description": "The name of the github repository."
+      "Description": "land_acknowledgement_lambda."
     },
     "GithubRepoSecretId": {
       "Type": "String",
