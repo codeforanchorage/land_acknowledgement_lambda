@@ -57,7 +57,7 @@ class PoiResponse(GenericResponse):
 
 class LocationResponse(GenericResponse):
     '''Base class for repsonses that hit the geocoder.'''
-    
+
     def __init__(self, query, location):
         super().__init__(query, location)
         self.lands = native_land_from_point(*self.location['center'])
@@ -99,6 +99,7 @@ class AddressResponse(LocationResponse):
             street = ', '.join([street, context.get('place'), context.get('region')])
         return f"On {street} you are on {land_string} land."
 
+
 type_dispatch = {
     'country': TooBigResponse,
     'region': TooBigResponse,
@@ -110,6 +111,7 @@ type_dispatch = {
     'address': AddressResponse,
     'poi': PoiResponse
 }
+
 
 def process_body(body):
     greetings = {'hello', 'hi', 'help'}
@@ -126,5 +128,5 @@ def process_body(body):
             return response_class(body, location)
         except LocationNotFound:
             return f"I could not find the location: {body}"
-        except Exception as e:
+        except Exception:
             return "Sorry, I having some technical trouble right now."

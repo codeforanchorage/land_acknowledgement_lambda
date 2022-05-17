@@ -2,6 +2,7 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 
+
 def get_secret(secret_name, region_name="us-west-2"):
 
     session = boto3.Session()

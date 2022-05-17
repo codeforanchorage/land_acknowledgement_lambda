@@ -13,6 +13,7 @@ MAPBOX_TOKEN = os.getenv('MAPBOX_TOKEN') or get_secret('MAPBOX_TOKEN')
 if MAPBOX_TOKEN is None:
     raise ConfigurationError("The env MAPBOX_TOKEN is missing from the environment.")
 
+
 def geolocate(raw_str):
     query = {
         'access_token': MAPBOX_TOKEN,
@@ -20,7 +21,7 @@ def geolocate(raw_str):
     }
     url = API_BASE + raw_str + '.json'
     resp = session.request('GET', url, fields=query)
-    
+
     if resp.status == 404:
         raise LocationNotFound
     elif resp.status != 200:

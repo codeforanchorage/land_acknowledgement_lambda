@@ -21,7 +21,6 @@ def get_request_body(current_request):
     return ''
 
 
-
 @app.route('/', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def index_post():
     '''
