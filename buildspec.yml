@@ -1,0 +1,17 @@
+artifacts:
+  files:
+  - transformed.yaml
+  type: zip
+phases:
+  build:
+    commands:
+    - chalice package /tmp/packaged
+    - aws cloudformation package --template-file /tmp/packaged/sam.json --s3-bucket
+      ${APP_S3_BUCKET} --output-template-file transformed.yaml
+  install:
+    commands:
+    - pip install 'chalice>=1.26.0,<1.27.0'
+    - pip install -r requirements.txt
+    runtime-versions:
+      python: '3.8'
+version: '0.2'
