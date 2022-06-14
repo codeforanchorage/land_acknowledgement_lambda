@@ -1,10 +1,12 @@
 from urllib.parse import parse_qs
 
+import structlog
 from chalice.app import Chalice, BadRequestError, Response
 
 from chalicelib.twilio import twilio_response
 from chalicelib.responses import process_body
 
+logger = structlog.get_logger()
 
 app = Chalice(app_name='ak_land_aws')
 
@@ -50,6 +52,7 @@ def index_get(body):
     and will receive a JSON string response
     '''
     ret_text = process_body(body)
+
     return Response(body=str(ret_text),
                     status_code=200,
                     headers={'Content-Type': 'application/json'})

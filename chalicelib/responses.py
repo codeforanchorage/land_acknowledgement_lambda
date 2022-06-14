@@ -4,9 +4,20 @@ In general we are hoping for place and postal code locations. Larger areas like 
 and countries don't make sense and the classes should respond appropriately.
 '''
 import abc
-
+import logging
+import sys
+import structlog
 from chalicelib.native_land import native_land_from_point
 from chalicelib.geocode import geolocate, LocationNotFound
+
+logging.basicConfig(
+        format="%(message)s",
+        stream=sys.stdout,
+        level=logging.INFO,
+        force=True,
+    )
+structlog.configure(processors=[structlog.processors.JSONRenderer()])
+logger = structlog.get_logger()
 
 MORE_INFO_LINK = "land.codeforanchorage.org"
 SUFFIX = f"More info: {MORE_INFO_LINK}"
@@ -121,12 +132,21 @@ def process_body(body):
     elif len(body) < 3:
         return "Hmm, that seems a little vague. Try sending a city and state such as 'Anchorage, AK'"
     else:
+        log = logger.bind(body=body)
         try:
             location = geolocate(body)
-            place_type = location['place_type'][0]            
+            place_type = location['place_type'][0]
+            log = logger.bind(coordinates=location['center'], 
+                    found_location=location['place_name'],
+                    place_type=place_type
+                )
             response_class = type_dispatch.get(place_type, GenericResponse)
+
+            log.info('success')
             return response_class(body, location)
         except LocationNotFound:
+            log.info('location_not_found')
             return f"I could not find the location: {body}"
-        except Exception:
+        except Exception as e:
+            log.error('error', error=e)
             return "Sorry, I having some technical trouble right now."
