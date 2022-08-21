@@ -29,6 +29,7 @@ class GenericResponse():
 
 class TooBigResponse(GenericResponse):
     '''Respond to places like countries and states.'''
+
     def __str__(self):
         place_type = self.location['place_type'][0]
         place_name = self.location['text']
@@ -40,6 +41,7 @@ class TooBigResponse(GenericResponse):
 
 class PoiResponse(GenericResponse):
     '''Response for points of interest.'''
+
     def __str__(self):
         place_name = self.query
         return (
@@ -82,6 +84,7 @@ class LocationResponse(GenericResponse):
 
 class PostalCodeResponse(LocationResponse):
     '''Response for zip codes.'''
+
     def response_from_area(self, land_string, context):
         area = self.location['text']
         return f"In the area of {area} you are on {land_string} land."
@@ -89,6 +92,7 @@ class PostalCodeResponse(LocationResponse):
 
 class PlaceResponse(LocationResponse):
     '''Response for cities and towns.'''
+
     def response_from_area(self, land_string, context):
         place = self.location['text']
         if 'region' in context:
@@ -98,6 +102,7 @@ class PlaceResponse(LocationResponse):
 
 class AddressResponse(LocationResponse):
     '''Response for addresses'''
+
     def response_from_area(self, land_string, context):
         street = self.location['text']
         if 'place' in context:

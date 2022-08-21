@@ -1,6 +1,7 @@
 import pytest
+from unittest.mock import patch
 
-from chalicelib.responses import GenericResponse
+from chalicelib.responses import LocationResponse
 
 @pytest.fixture
 def lands_list():
@@ -31,17 +32,26 @@ def lands_list():
         },
 ]
 
-def test_land_string_more_than_two(lands_list):
+@patch('chalicelib.responses.native_land_from_point')
+def test_land_string_more_than_two(land_point_mock, lands_list):
     '''It should make a string with names seperated by commas with a final "and"'''
-    r = GenericResponse('some query', 'somelocation')
-    assert r.land_string(lands_list) == "Peoria, Bodwéwadmi (Potawatomi), and Mvskoke (Muscogee)"
+    land_point_mock.return_value = lands_list
+    someLocation = {"center": [10, 10]}
+    r = LocationResponse('some query', someLocation)
+    assert r.land_string() == "Peoria, Bodwéwadmi (Potawatomi), and Mvskoke (Muscogee)"
 
-def test_land_string_two(lands_list):
+@patch('chalicelib.responses.native_land_from_point')
+def test_land_string_two(land_point_mock, lands_list):
     '''It should make a string with names seperated by "and"'''
-    r = GenericResponse('some query', 'somelocation')
-    assert r.land_string(lands_list[:2]) == "Peoria and Bodwéwadmi (Potawatomi)"
+    land_point_mock.return_value = lands_list[:2]
+    someLocation = {"center": [10, 10]}
+    r = LocationResponse('some query', someLocation)
+    assert r.land_string() == "Peoria and Bodwéwadmi (Potawatomi)"
 
-def test_land_string_one(lands_list):
+@patch('chalicelib.responses.native_land_from_point')
+def test_land_string_one(land_point_mock, lands_list):
     '''It should make a string with names seperated by "and"'''
-    r = GenericResponse('some query', 'somelocation')
-    assert r.land_string(lands_list[:1]) == "Peoria"
+    land_point_mock.return_value = lands_list[:1]
+    someLocation = {"center": [10, 10]}
+    r = LocationResponse('some query', someLocation)
+    assert r.land_string() == "Peoria"
