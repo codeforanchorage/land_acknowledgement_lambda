@@ -23,12 +23,15 @@ def geolocate(raw_str):
     resp = session.request('GET', url, fields=query)
 
     if resp.status == 404:
-        raise LocationNotFound
+        raise LocationNotFound(raw_str)
     elif resp.status != 200:
         raise APIError(resp.reason)
 
     data = json.loads(resp.data.decode('utf-8'))
-    return location_from_collection(data)
+    try:
+        return location_from_collection(data)
+    except LocationNotFound:
+        raise LocationNotFound(raw_str)
 
 
 def location_from_collection(json_data):
@@ -53,5 +56,5 @@ def location_from_collection(json_data):
 
     features = json_data['features']
     if len(features) == 0:
-        raise LocationNotFound("Not found")
+        raise LocationNotFound
     return max(features, key=lambda f: (f['relevance'], priorities.get(f['place_type'][0], 0)))
