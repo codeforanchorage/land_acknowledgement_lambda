@@ -4,20 +4,12 @@ In general we are hoping for place and postal code locations. Larger areas like 
 and countries don't make sense and the classes should respond appropriately.
 '''
 import abc
-import logging
-import sys
 import structlog
 from chalicelib.native_land import native_land_from_point
+from chalicelib.errors import MissingLocationError
 from chalicelib.geocode import geolocate, LocationNotFound
 
-logging.basicConfig(
-        format="%(message)s",
-        stream=sys.stdout,
-        level=logging.INFO,
-        force=True,
-    )
 structlog.configure(processors=[structlog.processors.JSONRenderer()])
-logger = structlog.get_logger()
 
 MORE_INFO_LINK = "land.codeforanchorage.org"
 SUFFIX = f"More info: {MORE_INFO_LINK}"
@@ -28,18 +20,8 @@ class GenericResponse():
         self.location = location
         self.query = query
 
-    def land_string(self, lands):
-        '''Converts lists of lands into string sent to user'''
-        names = [land['Name'] for land in lands]
-        if len(lands) == 1:
-            land_string = names[0]
-        elif len(lands) == 2:
-            land_string = ' and '.join(names)
-        else:
-            all_but_last = ', '.join(names[:-1])
-            land_string = f'{all_but_last}, and {names[-1]}'
-
-        return land_string
+    def to_dict(self):
+        return self.__dict__
 
     def __str__(self):
         return f"Sorry, I don't have information about {self.query}."
@@ -71,18 +53,30 @@ class LocationResponse(GenericResponse):
 
     def __init__(self, query, location):
         super().__init__(query, location)
-        self.lands = native_land_from_point(*self.location['center'])
+        lands = native_land_from_point(*self.location['center'])
+        self.land_names = [land['Name'] for land in lands]
+
+    def land_string(self):
+        '''Converts lists of lands into string sent to user'''
+        if len(self.land_names) == 1:
+            land_string = self.land_names[0]
+        elif len(self.land_names) == 2:
+            land_string = ' and '.join(self.land_names)
+        else:
+            all_but_last = ', '.join(self.land_names[:-1])
+            land_string = f'{all_but_last}, and {self.land_names[-1]}'
+        return land_string
 
     @abc.abstractmethod
     def response_from_area(self, lands_string, context):
         """Create a response string appropritate to the type"""
-        return
+        pass
 
     def __str__(self):
-        if not self.lands:
+        if not self.land_names:
             return super().__str__()
         context = {item['id'].partition('.')[0]: item['text'] for item in self.location['context']}
-        land_string = self.land_string(self.lands)
+        land_string = self.land_string()
         return self.response_from_area(land_string, context)
 
 
@@ -122,31 +116,3 @@ type_dispatch = {
     'address': AddressResponse,
     'poi': PoiResponse
 }
-
-
-def process_body(body):
-    greetings = {'hello', 'hi', 'help'}
-
-    if not body or body.lower() in greetings:
-        return "Hello. Please tell me the town and state you are in. For example, 'Anchorage, AK'"
-    elif len(body) < 3:
-        return "Hmm, that seems a little vague. Try sending a city and state such as 'Anchorage, AK'"
-    else:
-        log = logger.bind(body=body)
-        try:
-            location = geolocate(body)
-            place_type = location['place_type'][0]
-            log = logger.bind(coordinates=location['center'], 
-                    found_location=location['place_name'],
-                    place_type=place_type
-                )
-            response_class = type_dispatch.get(place_type, GenericResponse)
-
-            log.info('success')
-            return response_class(body, location)
-        except LocationNotFound:
-            log.info('location_not_found')
-            return f"I could not find the location: {body}"
-        except Exception as e:
-            log.error('error', error=e)
-            return "Sorry, I having some technical trouble right now."

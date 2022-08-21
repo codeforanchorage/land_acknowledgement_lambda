@@ -3,8 +3,9 @@ from urllib.parse import parse_qs
 import structlog
 from chalice.app import Chalice, BadRequestError, Response
 
+from chalicelib.errors import MissingLocationError, LocationNotFound, ShortLocationError
 from chalicelib.twilio import twilio_response
-from chalicelib.responses import process_body
+from chalicelib.responses import type_dispatch, geolocate, GenericResponse
 
 logger = structlog.get_logger()
 
@@ -22,6 +23,27 @@ def get_request_body(current_request):
         return body[0].strip()
     return ''
 
+def process_body(body):   
+    log = logger.bind(body=body)
+    
+    greetings = {'hello', 'hi', 'help'}
+
+    if not body or body.lower() in greetings:
+        log.info('no_location')
+        raise MissingLocationError
+    elif len(body) < 3:
+        log.info('no_location')
+        raise ShortLocationError
+    else:
+        location = geolocate(body)
+        place_type = location['place_type'][0]
+        
+        response_class = type_dispatch.get(place_type, GenericResponse)
+        ret_object = response_class(body, location)
+        log = logger.bind(**ret_object.to_dict()) 
+        log.info('success')
+        return ret_object
+
 
 @app.route('/', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def index_post():
@@ -31,8 +53,13 @@ def index_post():
     It will respond with TwilML xml output.
     '''
     body = get_request_body(app.current_request)
-    ret_text = process_body(body)
-    return Response(body=twilio_response(ret_text),
+
+    try:
+        ret_object = process_body(body)
+    except (MissingLocationError, LocationNotFound) as e:
+        ret_object = str(e)        
+    
+    return Response(body=twilio_response(ret_object),
                     status_code=200,
                     headers={'Content-Type': 'application/xml'})
 
@@ -51,8 +78,11 @@ def index_get(body):
     Non-Twilio users can access this route with a GET request 
     and will receive a JSON string response
     '''
-    ret_text = process_body(body)
+    try:
+        ret_object = process_body(body)
+    except (MissingLocationError, LocationNotFound) as e:
+        ret_object = str(e)
 
-    return Response(body=str(ret_text),
+    return Response(body=str(ret_object),
                     status_code=200,
                     headers={'Content-Type': 'application/json'})
