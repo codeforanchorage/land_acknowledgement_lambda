@@ -4,6 +4,7 @@ In general we are hoping for place and postal code locations. Larger areas like 
 and countries don't make sense and the classes should respond appropriately.
 '''
 import abc
+import html
 import structlog
 from chalicelib.native_land import native_land_from_point
 from chalicelib.errors import MissingLocationError
@@ -63,7 +64,7 @@ class LocationResponse(GenericResponse):
         if len(self.land_names) == 1:
             land_string = self.land_names[0]
         elif len(self.land_names) == 2:
-            land_string = ' and '.join(self.land_names)
+            land_string = " and ".join(self.land_names)
         else:
             all_but_last = ', '.join(self.land_names[:-1])
             land_string = f'{all_but_last}, and {self.land_names[-1]}'
@@ -97,7 +98,7 @@ class PlaceResponse(LocationResponse):
         place = self.location['text']
         if 'region' in context:
             place = ', '.join([place, context.get('region')])
-        return f"In {place} you are on {land_string} land."
+        return html.unescape(f"In {place} you are on {land_string} land.")
 
 
 class AddressResponse(LocationResponse):
