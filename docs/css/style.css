@@ -1,0 +1,112 @@
+/* Globals and Resets */
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+:root{
+    font-size:18px;
+}
+
+/* Element Stylings */
+
+body {
+    background-color: #333;
+    font-family: 'Arvo', serif;
+    letter-spacing:0.05em;
+}
+
+input {
+    height: 40px;
+    font-size: 1.2em;
+    padding: 1%;
+    margin: 1.5%;
+}
+
+main {
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    width:100%;
+    margin:0 auto;
+    padding:3em 2em 8em;
+    background-color:rgba(0,0,0,0.6);
+    min-height:100vh;
+    color: rgba(255,255,255,0.9);
+    text-align:center;
+    line-height:2em;
+    
+}
+footer {
+    margin-top: 5em;
+    position: absolute;
+    bottom: 0;
+    width: 80%;
+    left: 10%;
+    letter-spacing: initial;
+}
+
+h1 {
+    color:#CD5C5C;
+    margin-bottom:1em;
+    font-size: 7.5vw;
+
+} h1::after {
+    display:block;
+    content:"";
+    width:40%;
+    margin:.5em auto 0;
+    border-bottom: 1px solid #CD5C5C;
+}
+
+h2 {
+    color:#CD5C5C;
+}
+
+h3 {
+    color:#008000;
+    font-size: 1.5em;
+}
+
+a {
+    color: rgba(255,255,255,0.9);
+}
+a:hover {
+    color: rgba(255,255,255,0.7);
+}
+
+
+hr {
+    width: 50%;
+    margin: 0.5em auto;
+}
+
+/* Classes */
+
+.subtext {
+    font-size:1.25em;
+}
+.phoneNumber {
+    font-size:2em;
+    font-weight:bold;
+    margin-top:.5em;
+    margin-bottom:.5em;
+    display:block;
+    letter-spacing: 0.2em;
+}
+
+/* Media Queries */
+
+@media screen and (min-width:960px){
+    main{
+        width: 50%;
+        padding: 1em 4em;
+    }
+}
+
+@media screen and (min-width:460px){
+    h1{
+        font-size:2em
+    }
+}
