@@ -54,7 +54,7 @@ cors_config = CORSConfig(
     allow_credentials=True
 )
 
-@app.route('/', methods=['POST'], cors=cors_config, content_types=['application/x-www-form-urlencoded'])
+@app.route('/', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def index_post():
     '''
     This is the route Twilio should access. The user input should be in a
@@ -81,7 +81,7 @@ def index_empty_get():
                     headers={'Content-Type': 'application/json'})
 
 
-@app.route('/{body}', methods=['GET'])
+@app.route('/{body}', cors=cors_config, methods=['GET'])
 def index_get(body):
     '''
     Non-Twilio users can access this route with a GET request
