@@ -24,6 +24,10 @@ input {
     margin: 1.5%;
 }
 
+.loading {
+    opacity: .5;
+}
+
 main {
     display:flex;
     flex-direction:column;
@@ -36,7 +40,7 @@ main {
     color: rgba(255,255,255,0.9);
     text-align:center;
     line-height:2em;
-    
+
 }
 footer {
     margin-top: 5em;
