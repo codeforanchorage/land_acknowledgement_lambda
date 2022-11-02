@@ -12,7 +12,7 @@
 /* Element Stylings */
 
 body {
-    background-color: #333;
+    background-color: #c8c4c4;
     font-family: 'Arvo', serif;
     letter-spacing:0.05em;
 }
@@ -35,7 +35,7 @@ main {
     width:100%;
     margin:0 auto;
     padding:3em 2em 8em;
-    background-color:rgba(0,0,0,0.6);
+    background-color: rgba(39, 54, 70);
     min-height:100vh;
     color: rgba(255,255,255,0.9);
     text-align:center;
@@ -52,7 +52,7 @@ footer {
 }
 
 h1 {
-    color:#CD5C5C;
+    color:#EEE;
     margin-bottom:1em;
     font-size: 7.5vw;
 
@@ -65,24 +65,24 @@ h1 {
 }
 
 h2 {
-    color:#CD5C5C;
+    color:#EEE;
     margin-bottom:1em;
     font-size:2em;
 }
 
 h3 {
-    color:#008000;
+    color:#eb8d15;
     font-size: 1.5em;
 }
 p.info {
-    color:#CD5C5C;
+    color:#EEE;
     font-size: 1.5em;
 }
 a {
-    color: rgba(255,255,255,0.9);
+    color:rgb(132, 167, 230);
 }
 a:hover {
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255);
 }
 
 
