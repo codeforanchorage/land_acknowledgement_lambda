@@ -69,7 +69,7 @@ class LocationResponse(GenericResponse):
 
     @abc.abstractmethod
     def response_from_area(self, context):
-        """Create a response string appropritate to the type"""
+        """Create a response string appropriate to the type"""
         pass
 
     def __str__(self):
@@ -93,7 +93,7 @@ class PlaceResponse(LocationResponse):
     def response_from_area(self, context):
         place = self.location['text']
         if 'region' in context:
-            place = ', '.join([place, context.get('region')])
+            place = ', '.join([place, context['region']])
         return html.unescape(f"In {place} you are on {self.land_string} land.")
 
 
@@ -103,7 +103,7 @@ class AddressResponse(LocationResponse):
     def response_from_area(self, context):
         street = self.location['text']
         if 'place' in context:
-            street = ', '.join([street, context.get('place'), context.get('region')])
+            street = ', '.join([street, context['place'], context.get('region')])
         return f"On {street} you are on {self.land_string} land."
 
 
