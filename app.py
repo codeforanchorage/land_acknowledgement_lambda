@@ -13,6 +13,8 @@ logger = structlog.get_logger()
 
 app = Chalice(app_name='ak_land_aws')
 
+HELLO_RESPONSE = "Hello. Please tell me the town and state you are in. For example, 'Anchorage, AK'"
+
 
 def get_query(raw_body: bytes) -> str:
     if not raw_body:
@@ -31,7 +33,7 @@ def process_query(query: str) -> str:
     greetings = {'hello', 'hi', 'help'}
     if not query or query.lower() in greetings:
         log.info('no_location')
-        return "Hello. Please tell me the town and state you are in. For example, 'Anchorage, AK'"
+        return HELLO_RESPONSE
     elif len(query) < 3:
         log.info('short_query')
         return "Hmm, that seems a little vague. Try sending a city and state such as 'Anchorage, AK'"
@@ -68,8 +70,7 @@ def index_post():
 
 @app.route('/', methods=['GET'])
 def index_empty_get():
-    ret_text = "Hello. Please tell me the town and state you are in. For example, 'Anchorage, AK'"
-    return Response(body=ret_text,
+    return Response(body=HELLO_RESPONSE,
                     status_code=200,
                     headers={'Content-Type': 'application/json'})
 
