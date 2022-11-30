@@ -36,7 +36,7 @@ class TooBigResponse(GenericResponse):
         place_name = self.location['text']
         return (
             f"A {place_type} like {place_name} is a little too big for this service. "
-            f"Try sending a city and state."
+            "Try sending a city and state."
         )
 
 
