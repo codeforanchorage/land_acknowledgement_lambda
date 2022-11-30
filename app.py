@@ -14,8 +14,7 @@ logger = structlog.get_logger()
 app = Chalice(app_name='ak_land_aws')
 
 
-def get_request_body(current_request):
-    raw_body = current_request.raw_body
+def get_query(raw_body: bytes) -> str:
     if not raw_body:
         raise BadRequestError("Requests must post a 'Body' paramter")
     str_body = raw_body.decode('utf-8')
@@ -26,26 +25,26 @@ def get_request_body(current_request):
     return ''
 
 
-def process_body(body) -> str:
-    log = logger.bind(body=body)
+def process_query(query: str) -> str:
+    log = logger.bind(body=query)
 
     greetings = {'hello', 'hi', 'help'}
-    if not body or body.lower() in greetings:
+    if not query or query.lower() in greetings:
         log.info('no_location')
         return "Hello. Please tell me the town and state you are in. For example, 'Anchorage, AK'"
-    elif len(body) < 3:
+    elif len(query) < 3:
         log.info('short_query')
         return "Hmm, that seems a little vague. Try sending a city and state such as 'Anchorage, AK'"
     else:
         try:
-            location = geolocate(body)
+            location = geolocate(query)
         except LocationNotFound as e:
             log.info('location_not_found')
             return str(e)
         place_type = location['place_type'][0]
 
         response_class = response_type_from_place_type(place_type)
-        ret_object = response_class(body, location)
+        ret_object = response_class(query, location)
         log = logger.bind(**ret_object.to_dict())
         log.info('success')
         return str(ret_object)
@@ -60,8 +59,8 @@ def index_post():
     The user input should be in a www-form-encoded `body`.
     It will respond with TwilML xml output.
     '''
-    body = get_request_body(app.current_request)
-    resp_text = process_body(body)
+    query = get_query(app.current_request.raw_body)
+    resp_text = process_query(query)
     return Response(body=twilio_response(resp_text),
                     status_code=200,
                     headers={'Content-Type': 'application/xml'})
@@ -84,8 +83,8 @@ CORS_CONFIG = CORSConfig(
 )
 
 
-@app.route('/{body}', cors=CORS_CONFIG, methods=['GET'])
-def index_get(body):
+@app.route('/{query}', cors=CORS_CONFIG, methods=['GET'])
+def index_get(query: str):
     '''
     Non-Twilio users can access this route with a GET request
     and will receive a string response.
@@ -93,7 +92,7 @@ def index_get(body):
     This for instance is what the land.codeforanchorage.org website
     uses to get the response.
     '''
-    resp_text = process_body(body)
+    resp_text = process_query(query)
     return Response(body=resp_text,
                     status_code=200,
                     headers={'Content-Type': 'application/json'})
