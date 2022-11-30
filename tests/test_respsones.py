@@ -1,7 +1,9 @@
-import pytest
 from unittest.mock import patch
 
+import pytest
+
 from chalicelib.responses import LocationResponse
+
 
 @pytest.fixture
 def lands_list():
