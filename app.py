@@ -1,14 +1,14 @@
-from chalice import CORSConfig
-
 from urllib.parse import parse_qs
 
 import structlog
-from chalice.app import Chalice, BadRequestError, Response
+from chalice import CORSConfig
+from chalice.app import BadRequestError, Chalice, Response
 
-from chalicelib.errors import MissingLocationError, LocationNotFound, ShortLocationError
-from chalicelib.twilio import twilio_response
-from chalicelib.responses import response_type_from_place_type
+from chalicelib.errors import (LocationNotFound, MissingLocationError,
+                               ShortLocationError)
 from chalicelib.geocode import geolocate
+from chalicelib.responses import response_type_from_place_type
+from chalicelib.twilio import twilio_response
 
 logger = structlog.get_logger()
 
