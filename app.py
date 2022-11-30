@@ -70,9 +70,7 @@ def index_post():
 
 @app.route('/', methods=['GET'])
 def index_empty_get():
-    return Response(body=HELLO_RESPONSE,
-                    status_code=200,
-                    headers={'Content-Type': 'application/json'})
+    return _GET_response(HELLO_RESPONSE)
 
 
 CORS_CONFIG = CORSConfig(
@@ -94,6 +92,10 @@ def index_get(query: str):
     uses to get the response.
     '''
     resp_text = process_query(query)
+    return _GET_response(resp_text)
+
+
+def _GET_response(resp_text: str) -> Response:
     return Response(body=resp_text,
                     status_code=200,
                     headers={'Content-Type': 'application/json'})
