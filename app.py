@@ -47,14 +47,6 @@ def process_body(body):
         log.info('success')
         return ret_object
 
-cors_config = CORSConfig(
-    allow_origin='https://land.codeforanchorage.org',
-    allow_headers=['X-Special-Header'],
-    max_age=600,
-    expose_headers=['X-Special-Header'],
-    allow_credentials=True
-)
-
 @app.route('/', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def index_post():
     '''
@@ -82,7 +74,16 @@ def index_empty_get():
                     headers={'Content-Type': 'application/json'})
 
 
-@app.route('/{body}', cors=cors_config, methods=['GET'])
+CORS_CONFIG = CORSConfig(
+    allow_origin='https://land.codeforanchorage.org',
+    allow_headers=['X-Special-Header'],
+    max_age=600,
+    expose_headers=['X-Special-Header'],
+    allow_credentials=True
+)
+
+
+@app.route('/{body}', cors=CORS_CONFIG, methods=['GET'])
 def index_get(body):
     '''
     Non-Twilio users can access this route with a GET request
