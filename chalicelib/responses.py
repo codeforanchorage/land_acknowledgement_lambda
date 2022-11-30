@@ -5,10 +5,10 @@ and countries don't make sense and the classes should respond appropriately.
 '''
 import abc
 import html
+
 import structlog
+
 from chalicelib.native_land import native_land_from_point
-from chalicelib.errors import MissingLocationError
-from chalicelib.geocode import geolocate, LocationNotFound
 
 structlog.configure(processors=[structlog.processors.JSONRenderer()])
 

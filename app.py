@@ -7,7 +7,8 @@ from chalice.app import Chalice, BadRequestError, Response
 
 from chalicelib.errors import MissingLocationError, LocationNotFound, ShortLocationError
 from chalicelib.twilio import twilio_response
-from chalicelib.responses import type_dispatch, geolocate, GenericResponse
+from chalicelib.responses import type_dispatch, GenericResponse
+from chalicelib.geocode import geolocate
 
 logger = structlog.get_logger()
 
