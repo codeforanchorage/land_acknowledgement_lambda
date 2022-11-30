@@ -1,6 +1,6 @@
 from twilio.twiml.messaging_response import MessagingResponse
 
-MORE_INFO_LINK = "land.codeforanchorage.org"
+MORE_INFO_LINK = "http://land.codeforanchorage.org"
 SUFFIX = f"More info: {MORE_INFO_LINK}"
 
 
