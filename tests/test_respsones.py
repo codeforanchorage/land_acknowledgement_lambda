@@ -40,7 +40,7 @@ def test_land_string_more_than_two(land_point_mock, lands_list):
     land_point_mock.return_value = lands_list
     someLocation = {"center": [10, 10]}
     r = LocationResponse('some query', someLocation)
-    assert r.land_string() == "Peoria, Bodwéwadmi (Potawatomi), and Mvskoke (Muscogee)"
+    assert r.land_string == "Peoria, Bodwéwadmi (Potawatomi), and Mvskoke (Muscogee)"
 
 @patch('chalicelib.responses.native_land_from_point')
 def test_land_string_two(land_point_mock, lands_list):
@@ -48,7 +48,7 @@ def test_land_string_two(land_point_mock, lands_list):
     land_point_mock.return_value = lands_list[:2]
     someLocation = {"center": [10, 10]}
     r = LocationResponse('some query', someLocation)
-    assert r.land_string() == "Peoria and Bodwéwadmi (Potawatomi)"
+    assert r.land_string == "Peoria and Bodwéwadmi (Potawatomi)"
 
 @patch('chalicelib.responses.native_land_from_point')
 def test_land_string_one(land_point_mock, lands_list):
@@ -56,4 +56,4 @@ def test_land_string_one(land_point_mock, lands_list):
     land_point_mock.return_value = lands_list[:1]
     someLocation = {"center": [10, 10]}
     r = LocationResponse('some query', someLocation)
-    assert r.land_string() == "Peoria"
+    assert r.land_string == "Peoria"

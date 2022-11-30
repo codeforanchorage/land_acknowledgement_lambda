@@ -56,6 +56,7 @@ class LocationResponse(GenericResponse):
         lands = native_land_from_point(*self.location['center'])
         self.land_names = [land['Name'] for land in lands]
 
+    @property
     def land_string(self) -> str:
         '''Converts lists of lands into string sent to user'''
         if len(self.land_names) == 1:
@@ -67,7 +68,7 @@ class LocationResponse(GenericResponse):
             return f'{all_but_last}, and {self.land_names[-1]}'
 
     @abc.abstractmethod
-    def response_from_area(self, lands_string, context):
+    def response_from_area(self, context):
         """Create a response string appropritate to the type"""
         pass
 
@@ -75,36 +76,35 @@ class LocationResponse(GenericResponse):
         if not self.land_names:
             return super().__str__()
         context = {item['id'].partition('.')[0]: item['text'] for item in self.location['context']}
-        land_string = self.land_string()
-        return self.response_from_area(land_string, context)
+        return self.response_from_area(context)
 
 
 class PostalCodeResponse(LocationResponse):
     '''Response for zip codes.'''
 
-    def response_from_area(self, land_string, context):
+    def response_from_area(self, context):
         area = self.location['text']
-        return f"In the area of {area} you are on {land_string} land."
+        return f"In the area of {area} you are on {self.land_string} land."
 
 
 class PlaceResponse(LocationResponse):
     '''Response for cities and towns.'''
 
-    def response_from_area(self, land_string, context):
+    def response_from_area(self, context):
         place = self.location['text']
         if 'region' in context:
             place = ', '.join([place, context.get('region')])
-        return html.unescape(f"In {place} you are on {land_string} land.")
+        return html.unescape(f"In {place} you are on {self.land_string} land.")
 
 
 class AddressResponse(LocationResponse):
     '''Response for addresses'''
 
-    def response_from_area(self, land_string, context):
+    def response_from_area(self, context):
         street = self.location['text']
         if 'place' in context:
             street = ', '.join([street, context.get('place'), context.get('region')])
-        return f"On {street} you are on {land_string} land."
+        return f"On {street} you are on {self.land_string} land."
 
 
 def response_type_from_place_type(place_type: str) -> Type[GenericResponse]:
