@@ -5,6 +5,7 @@ and countries don't make sense and the classes should respond appropriately.
 '''
 import abc
 import html
+from typing import Type
 
 import structlog
 
@@ -14,7 +15,7 @@ structlog.configure(processors=[structlog.processors.JSONRenderer()])
 
 
 class GenericResponse():
-    def __init__(self, query, location):
+    def __init__(self, query: str, location: dict):
         self.location = location
         self.query = query
 
@@ -41,31 +42,29 @@ class PoiResponse(GenericResponse):
     '''Response for points of interest.'''
 
     def __str__(self):
-        place_name = self.query
         return (
-            f"I don't know how to find information about {place_name}. "
-            f"Try sending a city and state."
+            f"I don't know how to find information about {self.query}. "
+            "Try sending a city and state."
         )
 
 
 class LocationResponse(GenericResponse):
     '''Base class for repsonses that hit the geocoder.'''
 
-    def __init__(self, query, location):
+    def __init__(self, query: str, location: dict):
         super().__init__(query, location)
         lands = native_land_from_point(*self.location['center'])
         self.land_names = [land['Name'] for land in lands]
 
-    def land_string(self):
+    def land_string(self) -> str:
         '''Converts lists of lands into string sent to user'''
         if len(self.land_names) == 1:
-            land_string = self.land_names[0]
+            return self.land_names[0]
         elif len(self.land_names) == 2:
-            land_string = " and ".join(self.land_names)
+            return " and ".join(self.land_names)
         else:
             all_but_last = ', '.join(self.land_names[:-1])
-            land_string = f'{all_but_last}, and {self.land_names[-1]}'
-        return land_string
+            return f'{all_but_last}, and {self.land_names[-1]}'
 
     @abc.abstractmethod
     def response_from_area(self, lands_string, context):
@@ -108,7 +107,7 @@ class AddressResponse(LocationResponse):
         return f"On {street} you are on {land_string} land."
 
 
-def response_type_from_place_type(place_type: str):
+def response_type_from_place_type(place_type: str) -> Type[GenericResponse]:
     m = {
         'country': TooBigResponse,
         'region': TooBigResponse,
