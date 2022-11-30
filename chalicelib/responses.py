@@ -12,9 +12,6 @@ from chalicelib.native_land import native_land_from_point
 
 structlog.configure(processors=[structlog.processors.JSONRenderer()])
 
-MORE_INFO_LINK = "land.codeforanchorage.org"
-SUFFIX = f"More info: {MORE_INFO_LINK}"
-
 
 class GenericResponse():
     def __init__(self, query, location):

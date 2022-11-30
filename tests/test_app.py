@@ -4,7 +4,6 @@ from xml.dom import minidom
 from chalice.test import Client
 
 from app import app
-from chalicelib.responses import SUFFIX
 
 
 def get_message_from_xml(xml_string):
@@ -46,10 +45,12 @@ def test_post_location(request, good_geo_location, good_native_land_result):
         )
 
         result_string = get_message_from_xml(response.body.decode())
-        assert result_string == '\n'.join([
-            'In Chicago you are on Peoria and Bodwéwadmi (Potawatomi) land.',
-            SUFFIX
-        ])
+        assert result_string == '\n'.join(
+            [
+                'In Chicago you are on Peoria and Bodwéwadmi (Potawatomi) land.',
+                'More info: https://land.codeforanchorage.org',
+            ]
+        )
 
 
 @patch('chalicelib.http.session.request')
