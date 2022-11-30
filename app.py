@@ -7,7 +7,7 @@ from chalice.app import Chalice, BadRequestError, Response
 
 from chalicelib.errors import MissingLocationError, LocationNotFound, ShortLocationError
 from chalicelib.twilio import twilio_response
-from chalicelib.responses import type_dispatch, GenericResponse
+from chalicelib.responses import response_type_from_place_type
 from chalicelib.geocode import geolocate
 
 logger = structlog.get_logger()
@@ -41,7 +41,7 @@ def process_body(body):
         location = geolocate(body)
         place_type = location['place_type'][0]
 
-        response_class = type_dispatch.get(place_type, GenericResponse)
+        response_class = response_type_from_place_type(place_type)
         ret_object = response_class(body, location)
         log = logger.bind(**ret_object.to_dict())
         log.info('success')

@@ -111,14 +111,16 @@ class AddressResponse(LocationResponse):
         return f"On {street} you are on {land_string} land."
 
 
-type_dispatch = {
-    'country': TooBigResponse,
-    'region': TooBigResponse,
-    'postcode': PostalCodeResponse,
-    'district': TooBigResponse,
-    'place': PlaceResponse,
-    'locality': PlaceResponse,
-    'neighborhood': PlaceResponse,  # these might be too vauge to handle
-    'address': AddressResponse,
-    'poi': PoiResponse
-}
+def response_type_from_place_type(place_type: str):
+    m = {
+        'country': TooBigResponse,
+        'region': TooBigResponse,
+        'postcode': PostalCodeResponse,
+        'district': TooBigResponse,
+        'place': PlaceResponse,
+        'locality': PlaceResponse,
+        'neighborhood': PlaceResponse,  # these might be too vauge to handle
+        'address': AddressResponse,
+        'poi': PoiResponse
+    }
+    return m.get(place_type, GenericResponse)
