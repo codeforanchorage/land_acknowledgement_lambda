@@ -4,8 +4,7 @@ import structlog
 from chalice import CORSConfig
 from chalice.app import BadRequestError, Chalice, Response
 
-from chalicelib.errors import (LocationNotFound, MissingLocationError,
-                               ShortLocationError)
+from chalicelib.errors import LocationNotFound
 from chalicelib.geocode import geolocate
 from chalicelib.responses import response_type_from_place_type
 from chalicelib.twilio import twilio_response
@@ -26,26 +25,31 @@ def get_request_body(current_request):
         return body[0].strip()
     return ''
 
-def process_body(body):
+
+def process_body(body) -> str:
     log = logger.bind(body=body)
 
     greetings = {'hello', 'hi', 'help'}
-
     if not body or body.lower() in greetings:
         log.info('no_location')
-        raise MissingLocationError
+        return "Hello. Please tell me the town and state you are in. For example, 'Anchorage, AK'"
     elif len(body) < 3:
-        log.info('no_location')
-        raise ShortLocationError
+        log.info('short_query')
+        return "Hmm, that seems a little vague. Try sending a city and state such as 'Anchorage, AK'"
     else:
-        location = geolocate(body)
+        try:
+            location = geolocate(body)
+        except LocationNotFound as e:
+            log.info('location_not_found')
+            return str(e)
         place_type = location['place_type'][0]
 
         response_class = response_type_from_place_type(place_type)
         ret_object = response_class(body, location)
         log = logger.bind(**ret_object.to_dict())
         log.info('success')
-        return ret_object
+        return str(ret_object)
+
 
 @app.route('/', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def index_post():
@@ -57,13 +61,8 @@ def index_post():
     It will respond with TwilML xml output.
     '''
     body = get_request_body(app.current_request)
-
-    try:
-        ret_object = process_body(body)
-    except (MissingLocationError, LocationNotFound) as e:
-        ret_object = str(e)
-
-    return Response(body=twilio_response(ret_object),
+    resp_text = process_body(body)
+    return Response(body=twilio_response(resp_text),
                     status_code=200,
                     headers={'Content-Type': 'application/xml'})
 
@@ -94,11 +93,7 @@ def index_get(body):
     This for instance is what the land.codeforanchorage.org website
     uses to get the response.
     '''
-    try:
-        ret_object = process_body(body)
-    except (MissingLocationError, LocationNotFound) as e:
-        ret_object = str(e)
-
-    return Response(body=str(ret_object),
+    resp_text = process_body(body)
+    return Response(body=resp_text,
                     status_code=200,
                     headers={'Content-Type': 'application/json'})

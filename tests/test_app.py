@@ -31,6 +31,19 @@ def test_get_location(request, good_geo_location, good_native_land_result):
         assert response.body.decode() == 'In Chicago you are on Peoria and Bodwéwadmi (Potawatomi) land.'
 
 
+def test_get_short_location():
+    '''Short queries should get an error message'''
+    queries = [
+        'a',
+        'ab',
+        'XX',
+    ]
+    with Client(app) as client:
+        for query in queries:
+            response = client.http.get('/'+query)
+            assert response.body.decode() == "Hmm, that seems a little vague. Try sending a city and state such as 'Anchorage, AK'"
+
+
 @patch('chalicelib.http.session.request')
 def test_post_location(request, good_geo_location, good_native_land_result):
     '''It should respond with twiML that includes both the queried location and native lands'''
