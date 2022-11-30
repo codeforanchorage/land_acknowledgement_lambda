@@ -50,8 +50,10 @@ def process_body(body):
 @app.route('/', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def index_post():
     '''
-    This is the route Twilio should access. The user input should be in a
-    www-form-encoded `body`.
+    This is the route Twilio should access, e.g. from texting or from the
+    Facebook Messenger bot.
+
+    The user input should be in a www-form-encoded `body`.
     It will respond with TwilML xml output.
     '''
     body = get_request_body(app.current_request)
@@ -87,7 +89,10 @@ CORS_CONFIG = CORSConfig(
 def index_get(body):
     '''
     Non-Twilio users can access this route with a GET request
-    and will receive a JSON string response
+    and will receive a string response.
+
+    This for instance is what the land.codeforanchorage.org website
+    uses to get the response.
     '''
     try:
         ret_object = process_body(body)
