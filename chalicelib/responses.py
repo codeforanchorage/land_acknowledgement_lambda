@@ -5,19 +5,17 @@ and countries don't make sense and the classes should respond appropriately.
 '''
 import abc
 import html
+from typing import Type
+
 import structlog
+
 from chalicelib.native_land import native_land_from_point
-from chalicelib.errors import MissingLocationError
-from chalicelib.geocode import geolocate, LocationNotFound
 
 structlog.configure(processors=[structlog.processors.JSONRenderer()])
 
-MORE_INFO_LINK = "land.codeforanchorage.org"
-SUFFIX = f"More info: {MORE_INFO_LINK}"
-
 
 class GenericResponse():
-    def __init__(self, query, location):
+    def __init__(self, query: str, location: dict):
         self.location = location
         self.query = query
 
@@ -36,7 +34,7 @@ class TooBigResponse(GenericResponse):
         place_name = self.location['text']
         return (
             f"A {place_type} like {place_name} is a little too big for this service. "
-            f"Try sending a city and state."
+            "Try sending a city and state."
         )
 
 
@@ -44,81 +42,81 @@ class PoiResponse(GenericResponse):
     '''Response for points of interest.'''
 
     def __str__(self):
-        place_name = self.query
         return (
-            f"I don't know how to find information about {place_name}. "
-            f"Try sending a city and state."
+            f"I don't know how to find information about {self.query}. "
+            "Try sending a city and state."
         )
 
 
 class LocationResponse(GenericResponse):
     '''Base class for repsonses that hit the geocoder.'''
 
-    def __init__(self, query, location):
+    def __init__(self, query: str, location: dict):
         super().__init__(query, location)
         lands = native_land_from_point(*self.location['center'])
         self.land_names = [land['Name'] for land in lands]
 
-    def land_string(self):
+    @property
+    def land_string(self) -> str:
         '''Converts lists of lands into string sent to user'''
         if len(self.land_names) == 1:
-            land_string = self.land_names[0]
+            return self.land_names[0]
         elif len(self.land_names) == 2:
-            land_string = " and ".join(self.land_names)
+            return " and ".join(self.land_names)
         else:
             all_but_last = ', '.join(self.land_names[:-1])
-            land_string = f'{all_but_last}, and {self.land_names[-1]}'
-        return land_string
+            return f'{all_but_last}, and {self.land_names[-1]}'
 
     @abc.abstractmethod
-    def response_from_area(self, lands_string, context):
-        """Create a response string appropritate to the type"""
+    def response_from_area(self, context):
+        """Create a response string appropriate to the type"""
         pass
 
     def __str__(self):
         if not self.land_names:
             return super().__str__()
         context = {item['id'].partition('.')[0]: item['text'] for item in self.location['context']}
-        land_string = self.land_string()
-        return self.response_from_area(land_string, context)
+        return self.response_from_area(context)
 
 
 class PostalCodeResponse(LocationResponse):
     '''Response for zip codes.'''
 
-    def response_from_area(self, land_string, context):
+    def response_from_area(self, context):
         area = self.location['text']
-        return f"In the area of {area} you are on {land_string} land."
+        return f"In the area of {area} you are on {self.land_string} land."
 
 
 class PlaceResponse(LocationResponse):
     '''Response for cities and towns.'''
 
-    def response_from_area(self, land_string, context):
+    def response_from_area(self, context):
         place = self.location['text']
         if 'region' in context:
-            place = ', '.join([place, context.get('region')])
-        return html.unescape(f"In {place} you are on {land_string} land.")
+            place = ', '.join([place, context['region']])
+        return html.unescape(f"In {place} you are on {self.land_string} land.")
 
 
 class AddressResponse(LocationResponse):
     '''Response for addresses'''
 
-    def response_from_area(self, land_string, context):
+    def response_from_area(self, context):
         street = self.location['text']
         if 'place' in context:
-            street = ', '.join([street, context.get('place'), context.get('region')])
-        return f"On {street} you are on {land_string} land."
+            street = ', '.join([street, context['place'], context.get('region')])
+        return f"On {street} you are on {self.land_string} land."
 
 
-type_dispatch = {
-    'country': TooBigResponse,
-    'region': TooBigResponse,
-    'postcode': PostalCodeResponse,
-    'district': TooBigResponse,
-    'place': PlaceResponse,
-    'locality': PlaceResponse,
-    'neighborhood': PlaceResponse,  # these might be too vauge to handle
-    'address': AddressResponse,
-    'poi': PoiResponse
-}
+def response_type_from_place_type(place_type: str) -> Type[GenericResponse]:
+    m = {
+        'country': TooBigResponse,
+        'region': TooBigResponse,
+        'postcode': PostalCodeResponse,
+        'district': TooBigResponse,
+        'place': PlaceResponse,
+        'locality': PlaceResponse,
+        'neighborhood': PlaceResponse,  # these might be too vauge to handle
+        'address': AddressResponse,
+        'poi': PoiResponse
+    }
+    return m.get(place_type, GenericResponse)
