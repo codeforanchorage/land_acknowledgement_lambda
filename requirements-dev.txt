@@ -2,3 +2,5 @@ chalice==1.26.6
 urllib3==1.26.9
 pytest
 boto3
+pylint
+black

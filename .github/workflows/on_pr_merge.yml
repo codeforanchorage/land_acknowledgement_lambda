@@ -1,3 +1,10 @@
+name: Release pipeline
+
+on:
+  pull_request:
+    types:
+      - closed
+
 artifacts:
   files:
   - transformed.yaml
@@ -14,4 +21,4 @@ phases:
     - pip install -r requirements.txt
     runtime-versions:
       python: '3.8'
-version: '0.2'
+version: '0.3'

@@ -5,8 +5,8 @@ SUFFIX = f"More info: {MORE_INFO_LINK}"
 
 
 def twilio_response(resp):
-    '''Convert string to twilio xml response'''
-    resp = f'{str(resp)}\n{SUFFIX}'
+    """Convert string to twilio xml response"""
+    resp = f"{str(resp)}\n{SUFFIX}"
     twil_resp = MessagingResponse()
     twil_resp.message(resp)
     return str(twil_resp)

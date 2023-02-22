@@ -1,0 +1,46 @@
+name: CI pipeline
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!main'
+
+jobs:
+  ci-pipeline:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install dependencies and project in dev mode
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run black
+        run: |
+          echo "Make sure your code has style"
+          black --line-length 79 ./chalicelib/*.py
+
+      - name: Run lint
+        continue-on-error: true
+        run: |
+          echo "Make sure your code is of quality"
+          pylint ./chalicelib/ --disable=import-error,line-too-long,too-many-arguments,too-few-public-methods,missing-module-docstring,R0801,C0103
+
+      - name: Run tests
+        run: |
+          echo "Run all tests"
+          pytest tests/*.py
