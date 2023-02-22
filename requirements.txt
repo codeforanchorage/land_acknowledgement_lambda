@@ -1,4 +1,2 @@
 twilio==7.7.1
 structlog==21.5.0
-pylint
-black
