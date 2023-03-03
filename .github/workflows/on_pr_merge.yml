@@ -1,5 +1,4 @@
 name: Deploy branch to Chalice
-version: '0.3'
 
 on:
   pull_request:
