@@ -18,7 +18,7 @@ HELLO_RESPONSE = "Hello. Please tell me the town and state you are in. For examp
 
 def get_query(raw_body: bytes) -> str:
     if not raw_body:
-        raise BadRequestError("Requests must post a 'Body' paramter")
+        raise BadRequestError("Requests must post a 'Body' parameter")
     str_body = raw_body.decode('utf-8')
     str_body = parse_qs(str_body)
     body = str_body.get('Body', [])

@@ -1,7 +1,7 @@
 import json
+import os
 
 import pytest
-
 
 class Response:
     def __init__(self, data, message, status_code):
@@ -12,6 +12,17 @@ class Response:
     def json(self):
         return self.data
 
+
+@pytest.fixture
+def aws_credentials():
+    """Mocked AWS Credentials for moto."""
+    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+    os.environ["AWS_SECURITY_TOKEN"] = "testing"
+    os.environ["AWS_SESSION_TOKEN"] = "testing"
+    os.environ["MAPBOX_TOKEN"] = "testing"
+
+
 @pytest.fixture()
 def FakeResp():
     def _make_respsonse(data, message, status_code):
@@ -19,11 +30,11 @@ def FakeResp():
     return _make_respsonse
 
 @pytest.fixture()
-def response_404(FakeResp):
+def response_404(FakeResp, aws_credentials):
     return FakeResp(b'Not Found', 'Not Found', 404)
 
 @pytest.fixture
-def good_zip_location(FakeResp):
+def good_zip_location(FakeResp, aws_credentials):
     d = {
        "type": "FeatureCollection",
         "query": ["60614"],
@@ -53,7 +64,7 @@ def good_zip_location(FakeResp):
     return FakeResp(json.dumps(d).encode('utf-8'), 'OK', 200)
 
 @pytest.fixture
-def good_geo_location(FakeResp):
+def good_geo_location(FakeResp, aws_credentials):
     d = {
         'type': 'FeatureCollection',
         'query': ['chicago', 'il'],
@@ -116,7 +127,7 @@ def good_geo_location(FakeResp):
     return FakeResp(json.dumps(d).encode('utf-8'), 'OK', 200)
 
 @pytest.fixture
-def good_native_land_result(FakeResp):
+def good_native_land_result(FakeResp, aws_credentials):
     resp = [
         {
             "type": "Feature",
