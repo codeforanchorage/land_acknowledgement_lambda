@@ -24,8 +24,21 @@ input {
     margin: 1.5%;
 }
 
-.loading {
-    opacity: .5;
+#loading-icon-wrapper {
+display: none;
+justify-content: center;
+align-items: center;
+align-content: center;
+}
+
+#loading-icon {
+align-content: center;
+border: 8px solid #ffffff;
+border-top: 8px solid #eb8d15;
+border-radius: 50%;
+width: 50px;
+height: 50px;
+animation: spin 1s linear infinite;
 }
 
 main {
@@ -125,4 +138,9 @@ section.info {
     h1{
         font-size:2em
     }
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
 }

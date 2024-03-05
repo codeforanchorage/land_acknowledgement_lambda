@@ -44,6 +44,9 @@
           </form>
                <h3><div id="output"></div></h3>
           </section>
+            <div id="loading-icon-wrapper">
+                <div id="loading-icon"></div>
+            </div>
             <section class="info">
                 <p class="info">Enter your Canadian or US zip code or [city, state], or city, state & country for Australia, NZ or South America to the
                 <a target="_blank" href="https://www.messenger.com/t/LandAcknowledgement">Facebook Messenger bot</a>
@@ -78,7 +81,9 @@ function submitFunction(e) {
   e.preventDefault();
   var inp = document.getElementById('textInput');
   var sub = document.getElementById('textSubmit');
+  let loadIcon = document.getElementById('loading-icon-wrapper');
 
+  loadIcon.style.display='flex';
   inp.style.display='none';
   sub.style.display='none';
 
@@ -88,12 +93,14 @@ function submitFunction(e) {
 
     inp.style.display='';
     sub.style.display='';
+    loadIcon.style.display = 'none';
 
   }, (error) => {
     console.log(error);
 
     inp.style.display='';
     sub.style.display='';
+    loadIcon.style.display = 'none';
   });
 }
             </script>
