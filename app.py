@@ -74,7 +74,7 @@ def index_empty_get():
 
 
 CORS_CONFIG = CORSConfig(
-    # allow_origin='https://land.codeforanchorage.org',
+    allow_origin='https://land.codeforanchorage.org',
     allow_headers=['X-Special-Header'],
     max_age=600,
     expose_headers=['X-Special-Header'],
