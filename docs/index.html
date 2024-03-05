@@ -79,19 +79,21 @@ function submitFunction(e) {
   var inp = document.getElementById('textInput');
   var sub = document.getElementById('textSubmit');
 
-  inp.classList.add("loading");
-  sub.classList.add("loading");
+  inp.style.display='none';
+  sub.style.display='none';
 
   axios.get(base_url)
   .then(function(response)  {
     document.getElementById('output').innerHTML = response.data
-    inp.classList.remove("loading");
-    sub.classList.remove("loading");
+
+    inp.style.display='';
+    sub.style.display='';
 
   }, (error) => {
     console.log(error);
-    inp.classList.remove("loading");
-    sub.classList.remove("loading");
+
+    inp.style.display='';
+    sub.style.display='';
   });
 }
             </script>
