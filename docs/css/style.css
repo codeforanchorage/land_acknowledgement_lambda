@@ -5,8 +5,9 @@
     margin: 0;
     box-sizing: border-box;
 }
-:root{
-    font-size:18px;
+
+:root {
+    font-size: 18px;
 }
 
 /* Element Stylings */
@@ -14,7 +15,7 @@
 body {
     background-color: #c8c4c4;
     font-family: 'Arvo', serif;
-    letter-spacing:0.05em;
+    letter-spacing: 0.05em;
 }
 
 input {
@@ -32,41 +33,42 @@ input {
 /* Need a larger height due to the increased size of the stacked buttons*/
 @media only screen and (max-width: 436px) {
     #landForm {
-         height: 220px;
+        height: 220px;
     }
 }
 
 #loading-icon-wrapper {
-display: none;
-justify-content: center;
-align-items: center;
-align-content: center;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
 }
 
 #loading-icon {
-align-content: center;
-border: 8px solid #ffffff;
-border-top: 8px solid #eb8d15;
-border-radius: 50%;
-width: 50px;
-height: 50px;
-animation: spin 1s linear infinite;
+    align-content: center;
+    border: 8px solid #ffffff;
+    border-top: 8px solid #eb8d15;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
 }
 
 main {
-    display:flex;
-    flex-direction:column;
-    position:relative;
-    width:100%;
-    margin:0 auto;
-    padding:3em 2em 8em;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    padding: 3em 2em 8em;
     background-color: rgba(39, 54, 70);
-    min-height:100vh;
-    color: rgba(255,255,255,0.9);
-    text-align:center;
-    line-height:2em;
+    min-height: 100vh;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    line-height: 2em;
 
 }
+
 footer {
     margin-top: 5em;
     position: absolute;
@@ -77,37 +79,42 @@ footer {
 }
 
 h1 {
-    color:#EEE;
-    margin-bottom:1em;
+    color: #EEE;
+    margin-bottom: 1em;
     font-size: 7.5vw;
 
-} h1::after {
-    display:block;
-    content:"";
-    width:40%;
-    margin:.5em auto 0;
+}
+
+h1::after {
+    display: block;
+    content: "";
+    width: 40%;
+    margin: .5em auto 0;
     border-bottom: 1px solid #CD5C5C;
 }
 
 h2 {
-    color:#EEE;
-    margin-bottom:1em;
-    font-size:2em;
+    color: #EEE;
+    margin-bottom: 1em;
+    font-size: 2em;
 }
 
 h3 {
-    color:#eb8d15;
+    color: #eb8d15;
     font-size: 1.5em;
 }
+
 p.info {
-    color:#EEE;
+    color: #EEE;
     font-size: 1.5em;
 }
+
 a {
-    color:rgb(132, 167, 230);
+    color: rgb(132, 167, 230);
 }
+
 a:hover {
-    color: rgba(255,255,255);
+    color: rgba(255, 255, 255);
 }
 
 
@@ -119,40 +126,46 @@ hr {
 /* Classes */
 
 .subtext {
-    font-size:1.25em;
+    font-size: 1.25em;
 }
+
 .phoneNumber {
-    font-size:2em;
-    font-weight:bold;
-    margin-top:.5em;
-    margin-bottom:.5em;
-    display:block;
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: .5em;
+    margin-bottom: .5em;
+    display: block;
     letter-spacing: 0.2em;
 }
 
 section.info {
-    font-size:.6em;
+    font-size: .6em;
     line-height: 2.5em;
     margin-top: 3em;
     margin-bottom: 3em;
     text-align: left;
 }
+
 /* Media Queries */
 
-@media screen and (min-width:960px){
-    main{
+@media screen and (min-width: 960px) {
+    main {
         width: 50%;
         padding: 1em 4em;
     }
 }
 
-@media screen and (min-width:460px){
-    h1{
-        font-size:2em
+@media screen and (min-width: 460px) {
+    h1 {
+        font-size: 2em
     }
 }
 
 @keyframes spin {
-0% { transform: rotate(0deg); }
-100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
