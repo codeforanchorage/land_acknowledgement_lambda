@@ -24,6 +24,18 @@ input {
     margin: 1.5%;
 }
 
+#landForm {
+    height: 150px;
+}
+
+/* 436 px is the exact point where the submit button stacks under the input form*/
+/* Need a larger height due to the increased size of the stacked buttons*/
+@media only screen and (max-width: 436px) {
+    #landForm {
+         height: 220px;
+    }
+}
+
 #loading-icon-wrapper {
 display: none;
 justify-content: center;
