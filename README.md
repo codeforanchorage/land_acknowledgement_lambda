@@ -1,6 +1,6 @@
 # Land Acknowledgement SMS App
 Land Acknowledgement is a simple api that links data about native lands to current locations.
-Designed to run with AWS Lambda and API Gateway and produce output suitable for Twilio's SMS messaging.
+Designed to run with AWS Lambda and API Gateway and produce output suitable for Twilio's SMS messaging. Hi
 
 # Data Sources
 This project does two basic things:
