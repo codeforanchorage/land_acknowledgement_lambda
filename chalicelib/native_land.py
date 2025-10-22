@@ -9,7 +9,7 @@ API_BASE = "https://native-land.ca/api/index.php"
 
 def native_land_from_point(lon, lat):
     """lat lon in format: 42.553080,-86.473389"""
-    query = {"maps": "territories", "position": f"{lat},{lon}"}
+    query = {"maps": "territories", "position": f"{lat},{lon}", "key": os.getenv("API_KEY")}
     resp = session.request("GET", API_BASE, fields=query)
 
     if resp.status != 200:
