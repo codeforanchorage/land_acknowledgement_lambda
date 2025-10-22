@@ -1,4 +1,5 @@
 import json
+import os
 
 from chalicelib.http import session
 from chalicelib.errors import APIError
